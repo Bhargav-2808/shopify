@@ -16,31 +16,8 @@ const getAllCustomer = async (req, res) => {
     });
 
     data.map(async (item) => {
-      const customerExist = await Customer.findOne({
-        where: {
-          customerId: item.id,
-        },
-      });
-
-      if (customerExist) {
-        result = await Customer.update(
-          {
-            email: item.email,
-            first_name: item.first_name,
-            last_name: item.last_name,
-            state: item.state,
-            tags: item.tags,
-            currency: item.currency,
-            phone: item.phone,
-          },
-          {
-            where: {
-              customerId: item.id,
-            },
-          }
-        );
-      } else {
-        result = await Customer.create({
+      result = await Customer.upsert(
+        {
           email: item.email,
           first_name: item.first_name,
           last_name: item.last_name,
@@ -50,8 +27,13 @@ const getAllCustomer = async (req, res) => {
           phone: item.phone,
           customerId: item.id,
           shopId: shopData.dataValues.shopId,
-        });
-      }
+        },
+        {
+          where: {
+            customerId: item.id,
+          },
+        }
+      );
 
       item.addresses.map(async (i) => {
         const addressExist = await Address.findOne({
@@ -76,6 +58,8 @@ const getAllCustomer = async (req, res) => {
               name: i.name,
               country_name: i.country_name,
               is_default: i.default,
+              customerId: item.id,
+              addressId: i.id,
             },
             {
               where: {
@@ -104,9 +88,8 @@ const getAllCustomer = async (req, res) => {
         }
       });
     });
-    if (result) {
-      res.status(200).json({ success: "Data Synced Successfully" });
-    }
+
+    res.status(200).json({ success: "Data Synced Successfully" });
   } catch (error) {
     res?.status(500).json({ error: error.message });
   }
@@ -135,7 +118,7 @@ const getAllProduct = async (req, res) => {
   const data = await getStoreProduct("firstlucentapp.myshopify.com");
   let result;
 
-
+  console.log(data);
   try {
     const shopData = await Shop.findOne({
       where: {
@@ -144,33 +127,8 @@ const getAllProduct = async (req, res) => {
     });
 
     data.map(async (item) => {
-      const productExist = await Product.findOne({
-        where: {
-          productId: item.id,
-        },
-      });
-
-      if (productExist) {
-        result = await Product.update(
-          {
-            title: item.title,
-            body_html: item.body_html,
-            vendor: item.vendor,
-            product_type: item.product_type,
-            handle: item.handle,
-            template_suffix: item.template_suffix,
-            status: item.status,
-            published_scope: item.published_scope,
-            tags: item.tags,
-          },
-          {
-            where: {
-              productId: item.id,
-            },
-          }
-        );
-      } else {
-        result = await Product.create({
+      result = await Product.upsert(
+        {
           productId: item.id,
           shopId: shopData.dataValues.shopId,
           title: item.title,
@@ -183,32 +141,17 @@ const getAllProduct = async (req, res) => {
           published_scope: item.published_scope,
           tags: item.tags,
           shopId: shopData.dataValues.shopId,
-        });
-      }
-      item.images.map(async (i) => {
-        const imageExist = await Image.findOne({
+        },
+        {
           where: {
-            imageId: i.id,
+            productId: item.id,
           },
-        });
+        }
+      );
 
-        if (imageExist) {
-          await Image.update(
-            {
-              position: i.position,
-              width: i.position,
-              height: i.position,
-              src: i.position,
-              variant_ids: i.variant_ids,
-            },
-            {
-              where: {
-                imageId: i.id,
-              },
-            }
-          );
-        } else {
-          await Image.create({
+      item.images.map(async (i) => {
+        await Image.upsert(
+          {
             productId: i.product_id,
             imageId: i.id,
             position: i.position,
@@ -217,40 +160,17 @@ const getAllProduct = async (req, res) => {
             src: i.src,
             variant_ids: i.variant_ids,
             shopId: shopData.dataValues.shopId,
-          });
-        }
+          },
+          {
+            where: {
+              imageId: i.id,
+            },
+          }
+        );
       });
       item.variants.map(async (i) => {
-        console.log(i.id, "variantId");
-        const variantExist = await Variant.findOne({
-          where: {
-            variantId: i.id,
-          },
-        });
-
-        if (variantExist) {
-          await Variant.update(
-            {
-              price: i.price,
-              sku: i.sku,
-              position: i.position,
-              compare_at_price: i.compare_at_price,
-              option1: i.option1,
-              taxable: i.taxable,
-              barcode: i.barcode,
-              grams: i.grams,
-              weight: i.weight,
-              weight_unit: i.weight_unit,
-              title: i.title,
-            },
-            {
-              where: {
-                variantId: i.id,
-              },
-            }
-          );
-        } else {
-          await Variant.create({
+        await Variant.upsert(
+          {
             productId: i.product_id,
             price: i.price,
             sku: i.sku,
@@ -266,19 +186,20 @@ const getAllProduct = async (req, res) => {
             imageId: i.image_id,
             variantId: i.id,
             shopId: shopData.dataValues.shopId,
-          });
-        }
+          },
+          {
+            where: {
+              variantId: i.id,
+            },
+          }
+        );
       });
     });
 
-   
-      res.status(200).json({ success: "Product Data Synced Successfully" });
-    
+    res.status(200).json({ success: "Product Data Synced Successfully" });
   } catch (error) {
     res?.status(500).json({ error: error.message });
   }
-
-
 };
 
 export { getAllCustomer, getCustomer, getAllProduct };

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import loginUser from "../thunk/loginThunk.js";
+import customerThunk from "../thunk/customerThunk";
 
 const initialState = {
   user: null,
@@ -7,25 +7,25 @@ const initialState = {
   error: null,
 };
 
-const loginSlice = createSlice({
-  name: "login",
+const customerSlice = createSlice({
+  name: "customer",
   initialState,
 
   extraReducers: (builder) => {
     builder
-      .addCase(loginUser.pending, (state) => {
+      .addCase(customerThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state, action) => {
+      .addCase(customerThunk.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
       })
-      .addCase(loginUser.rejected, (state, action) => {
+      .addCase(customerThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
-export const loginReducer = loginSlice.reducer;
+export const customerReducer = customerSlice.reducer;

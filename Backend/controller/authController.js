@@ -17,8 +17,8 @@ const redirectUrl = (req, res) => {
 
   try {
     const redirectURL = `https://${shop}.myshopify.com/admin/oauth/authorize?client_id=${process.env.CLIENTID}&scope=${process.env.SHOPIFY_APP_SCOPES}&redirect_uri=${process.env.APP_URL}/api/auth&state=nonce`;
-    // res.redirect(redirectURL);
-    res.status(200).json({ redirectURL });
+    res.redirect(redirectURL);
+    // res.status(200).json({ redirectURL });
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -78,15 +78,15 @@ const generateToken = async (req, res) => {
               shopId: shopData.id,
               token: data?.data?.access_token,
             });
+            getAllCustomer();
+            getAllProduct();
           }
 
           if (response) {
-            getAllCustomer();
-            getAllProduct();
-            res.redirect(`http://localhost:3000?token=${jwtToken}`);
+            res.redirect(`http://localhost:3000/dashboard?token=${jwtToken}`);
           }
         } catch (error) {
-          console.log(error); 
+          console.log(error);
         }
       }
     } catch (error) {

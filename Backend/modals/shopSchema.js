@@ -19,6 +19,7 @@ const Shop = shopify.define(
     shopId: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey:true
     },
     token: {
       type: DataTypes.STRING,

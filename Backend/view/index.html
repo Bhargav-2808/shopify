@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Document</title>
+
+    <style>
+      .singup {
+        color: #000;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: block;
+        font-weight: bold;
+        font-size: x-large;
+        margin-top: 1.5em;
+      }
+
+      .card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 450px;
+        width: 400px;
+        flex-direction: column;
+        gap: 35px;
+        border-radius: 15px;
+        background: #e3e3e3;
+        box-shadow: 16px 16px 32px #c8c8c8, -16px -16px 32px #fefefe;
+        border-radius: 8px;
+      }
+
+      .inputBox {
+        width: 300px;
+        padding: 10px;
+        outline: none;
+        border: none;
+        color: #000;
+        font-size: 1em;
+        border: 2px solid #000;
+        transition: 0.1s;
+        border-radius: 8px;
+        background-color: white;
+      }
+
+      .enter {
+        height: 45px;
+        width: 100px;
+        border-radius: 5px;
+        border: 2px solid #000;
+        cursor: pointer;
+        background-color: transparent;
+        transition: 0.5s;
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 2px;
+        margin-bottom: 3em;
+      }
+
+      .enter:hover {
+        background-color: rgb(0, 0, 0);
+        color: white;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        height: 90vh;
+        align-items: center;
+      }
+
+      .box {
+      }
+    </style>
+
+    <script>
+      const getData = (e) => {
+        e.preventDefault();
+        console.log("Clicked", e);
+        const shopName = document.getElementById("shopName").value;
+        if (!shopName) {
+          console.log("No Shop");
+        } else {
+          window.location.href = `http://localhost:5555?shop=${shopName}`;
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <form method="get" onsubmit="getData(event)">
+        <div class="card">
+          <h3 class="singup">Shop Login</h3>
+          <input
+            type="text"
+            name="shopName"
+            id="shopName"
+            class="inputBox"
+            placeholder="myfirstapp"
+          />
+          <button class="enter" type="submit" id="loginBtn">Login</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

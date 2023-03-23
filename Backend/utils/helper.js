@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import crypto from "crypto";
 import Shop from "../modals/shopSchema.js";
 import jwt from "jsonwebtoken";
+import Shopify from "shopify-api-node";
+
 dotenv.config();
 
 const generateHMAC = (message) => {
@@ -13,14 +15,14 @@ const generateHMAC = (message) => {
 };
 
 const getShopData = async (token, shop) => {
+  const shopify = new Shopify({
+    shopName: shop,
+    accessToken: token,
+  });
   try {
-    const res = await axios.get(`https://${shop}/admin/api/2021-07/shop.json`, {
-      headers: {
-        "X-Shopify-Access-Token": token,
-      },
-    });
+    const shop = await shopify.shop.get();
 
-    return res?.data?.shop;
+    return shop;
   } catch (error) {
     throw new Error(error);
   }
@@ -66,7 +68,7 @@ const genratejwtToken = (id) => {
       expiresIn: "30d",
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 

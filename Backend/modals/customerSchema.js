@@ -20,6 +20,7 @@ const Customer = shopify.define(
     customerId: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey:true
     },
     state: {
       type: DataTypes.STRING,

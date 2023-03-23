@@ -23,8 +23,7 @@ const Login = () => {
     dispatch(loginShop(shopName));
   };
 
-  if (user) {
-  }
+ 
 
   useEffect(() => {
     if (query.get("token")) {

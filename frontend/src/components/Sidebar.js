@@ -1,41 +1,50 @@
-import React from "react";
-import { Frame, Navigation } from "@shopify/polaris";
-import { HomeMinor, OrdersMinor, ProductsMinor } from "@shopify/polaris-icons";
-import '../../src/style.css'
+import { Navigation } from "@shopify/polaris";
+import {
+  HomeMinor,
+  ProductsMinor,
+  CustomersMajor,
+} from "@shopify/polaris-icons";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+export const Sidebar = () => {
+  const nav = useNavigate();
+  const [select, setSelect] = useState("/dashboard");
+  const navigationItems = [
+    {
+      label: "Home",
+      url: "/dashboard",
+      icon: HomeMinor,
+    },
+    {
+      label: "Products",
+      url: "/product",
+      icon: ProductsMinor,
+    },
+    {
+      label: "Customers",
+      url: "/customer",
+      icon: CustomersMajor,
+    },
+  ];
 
-const Sidebar = () => {
+  useEffect(() => {
+    nav("/dashboard");
+  }, []);
+
   return (
-    <div>
-
-   
-    <Frame>
-      <Navigation location="/">
-        <Navigation.Section
-          items={[
-            {
-              url: "#",
-              label: "Home",
-              icon: HomeMinor,
-            },
-            {
-              url: "#",
-              excludePaths: ["#"],
-              label: "Orders",
-              icon: OrdersMinor,
-              badge: "15",
-            },
-            {
-              url: "#",
-              excludePaths: ["#"],
-              label: "Products",
-              icon: ProductsMinor,
-            },
-          ]}
+    <Navigation location="/">
+      {navigationItems.map((item) => (
+        <Navigation.Item
+          key={item.label}
+          label={item.label}
+          url={item.url}
+          icon={item.icon}
+          selected={select === item.url}
+          onClick={() => {
+            setSelect(item.url);
+          }}
         />
-      </Navigation>
-    </Frame>
-    </div>
+      ))}
+    </Navigation>
   );
 };
-
-export default Sidebar;

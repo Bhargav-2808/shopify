@@ -1,32 +1,31 @@
-import { TopBar, Frame } from "@shopify/polaris";
-import { useCallback } from "react";
-import "../../src/style.css";
+import { Avatar, TopBar } from "@shopify/polaris";
+import { useContext, useState } from "react";
+// import appContext from "../context/Createcontext";
 
-const TopBarMenu = () => {
-  const shopName = sessionStorage.getItem("shopName");
-  const handleNavigationToggle = useCallback(() => {
-    console.log("toggle navigation visibility");
-  }, []);
+export const TopBarMenu = () => {
+  let shopName = sessionStorage.getItem("shopName");
 
-  const userMenuMarkup = (
-    <TopBar.UserMenu
-      name={shopName.toUpperCase()}
-      initials={shopName[0].toUpperCase()}
-    />
-  );
-
-  const topBarMarkup = (
-    <TopBar
-      showNavigationToggle
-      userMenu={userMenuMarkup}
-      onNavigationToggle={handleNavigationToggle}
-    />
-  );
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => {
+    setIsMenuOpen((isMenuOpen) => !isMenuOpen);
+  };
 
   return (
-    <div>
-      <Frame topBar={topBarMarkup} />
-    </div>
+    <TopBar
+      showNavigationToggle
+      // onNavigationToggle={toggleMenu}
+      userMenu={
+        <TopBar.UserMenu
+          actions={[
+            {
+              items: [{ content: "Sign out" }],
+            },
+          ]}
+          name={"firstlucentapp"}
+          initials={"F"}
+          avatar={<Avatar customer size="medium" />}
+        />
+      }
+    />
   );
 };
-export default TopBarMenu;

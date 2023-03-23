@@ -1,58 +1,50 @@
 import axios from "axios";
 import { getDbbToken } from "./helper.js";
+import Shopify from "shopify-api-node";
 
 const getStoreCustomer = async (shop) => {
   const token = await getDbbToken(shop);
-  let customers = [];
-  let url = `https://${shop}/admin/api/2023-01/customers.json?limit=20`;
-  while (url) {
-    const data = await axios.get(url, {
-      headers: {
-        "x-shopify-access-token": token,
-      },
-    });
-    customers = [...customers, ...data?.data?.customers];
+  let customer = [];
 
-    let newUrl = data.headers.link.split(", ");
+  const shopify = new Shopify({
+    shopName: shop,
+    accessToken: token,
+  });
 
-    let nextUrl = newUrl.filter((item) => {
-      return item.includes('rel="next"');
-    })[0];
+  await (async () => {
+    let params = { limit: 10 };
 
-    if (!nextUrl) {
-      url = false;
-    } else {
-      url = nextUrl.match(/<(.*?)>/)[1];
-    }
-  }
-  return customers;
+    do {
+      const customers = await shopify.customer.list(params);
+
+      customer = [...customer, ...customers];
+
+      params = products.nextPageParameters;
+    } while (params !== undefined);
+  })().catch(console.error);
+  return customer;
 };
 
 const getStoreProduct = async (shop) => {
   const token = await getDbbToken(shop);
-  let products = [];
-  let url = `https://${shop}/admin/api/2023-01/products.json?limit=20`;
-  while (url) {
-    const data = await axios.get(url, {
-      headers: {
-        "x-shopify-access-token": token,
-      },
-    });
-    products = [...products, ...data?.data?.products];
+  let product = [];
 
-    let newUrl = data.headers.link.split(", ");
+  const shopify = new Shopify({
+    shopName: shop,
+    accessToken: token,
+  });
 
-    let nextUrl = newUrl.filter((item) => {
-      return item.includes('rel="next"');
-    })[0];
+  await (async () => {
+    let params = { limit: 10 };
 
-    if (!nextUrl) {
-      url = false;
-    } else {
-      url = nextUrl.match(/<(.*?)>/)[1];
-    }
-  }
-  return products;
+    do {
+      const products = await shopify.product.list(params);
+      product = [...product, ...products];
+
+      params = products.nextPageParameters;
+    } while (params !== undefined);
+  })().catch(console.error);
+  return product;
 };
 
 export { getStoreCustomer, getStoreProduct };

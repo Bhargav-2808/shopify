@@ -11,6 +11,7 @@ const Product = shopify.define(
     productId: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey:true
     },
     handle: {
       type: DataTypes.STRING,
@@ -35,7 +36,6 @@ const Product = shopify.define(
     },
     template_suffix: {
       type: DataTypes.STRING,
-  
     },
     title: {
       type: DataTypes.STRING,
@@ -80,6 +80,7 @@ const Image = shopify.define(
     imageId: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey:true
     },
     src: {
       type: DataTypes.STRING,
@@ -166,7 +167,6 @@ const Variant = shopify.define("variant", {
 
   sku: {
     type: DataTypes.STRING,
-
   },
   taxable: {
     type: DataTypes.BOOLEAN,
@@ -186,8 +186,9 @@ const Variant = shopify.define("variant", {
   },
 });
 
-Product.hasMany(Variant);
-Image.hasMany(Variant);
+Product.hasMany(Variant, { foreignKey: "productId" });
+Product.hasMany(Image, { foreignKey: "productId" });
+Image.hasMany(Variant, { foreignKey: "imageId" });
 
 Product.sync()
   .then(() => {
