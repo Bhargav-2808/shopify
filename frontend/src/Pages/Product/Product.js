@@ -4,8 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import productThunk from "../../../src/redux/thunk/productThunk";
 import {
   AlphaStack,
+  Button,
+  DataTable,
   Divider,
   Filters,
+  Icon,
   IndexTable,
   LegacyCard,
   Page,
@@ -13,6 +16,8 @@ import {
   Text,
   useIndexResourceState,
 } from "@shopify/polaris";
+import { DeleteMajor } from "@shopify/polaris-icons";
+import { EditMajor } from "@shopify/polaris-icons";
 import "../../style.css";
 
 const Product = () => {
@@ -27,7 +32,7 @@ const Product = () => {
     dispatch(
       productThunk({
         page: page,
-        limit: 10,
+        limit: 8,
         queryValue,
       })
     );
@@ -44,25 +49,22 @@ const Product = () => {
     setPage(0);
   }, [dispatch, queryValue]);
 
-  const productData = user?.data?.rows.map((i) => {
-    return {
-      id: +i.productId,
-      title: i.title,
-      product_type: i.product_type,
-      handle: i.handle,
-      published_scope: i.published_scope,
-      status: i.status,
-      vendor: i.vendor,
-      body_html: i.body_html,
-    };
+  const rows = user?.data?.rows.map((i) => {
+    return [
+      i.title,
+      i.product_type,
+      i.handle,
+      i.published_scope,
+      i.status,
+      i.vendor,
+      <Button primary>
+        <Icon source={EditMajor} color="base" />
+      </Button>,
+      <Button primary>
+        <Icon source={DeleteMajor} color="base" />
+      </Button>,
+    ];
   });
-  const { selectedResources, allResourcesSelected, handleSelectionChange } =
-    useIndexResourceState(productData);
-
-  const resourceName = {
-    singular: "customer",
-    plural: "customers",
-  };
 
   const handleTaggedWithRemove = useCallback(
     () => setTaggedWith(undefined),
@@ -83,111 +85,47 @@ const Product = () => {
     },
   ];
 
-  const rowMarkup = productData?.map(
-    (
-      {
-        id,
-        title,
-        product_type,
-        handle,
-        published_scope,
-        status,
-        vendor,
-        body_html,
-      },
-      index
-    ) => (
-      <IndexTable.Row
-        id={id}
-        key={id}
-        selected={selectedResources.includes(id)}
-        position={index}
-      >
-        <IndexTable.Cell>
-          <Text fontWeight="bold" as="span">
-            {index + 1}
-          </Text>
-        </IndexTable.Cell>
-        <IndexTable.Cell>
-          <Text as="span">{title}</Text>
-        </IndexTable.Cell>
-
-        <IndexTable.Cell>
-          <Text as="span">{product_type}</Text>
-        </IndexTable.Cell>
-        <IndexTable.Cell>
-          <Text as="span">{handle}</Text>
-        </IndexTable.Cell>
-        <IndexTable.Cell>
-          <Text as="span">{published_scope}</Text>
-        </IndexTable.Cell>
-        <IndexTable.Cell>
-          <Text as="span">{status}</Text>
-        </IndexTable.Cell>
-        <IndexTable.Cell>
-          <Text as="span">{vendor}</Text>
-        </IndexTable.Cell>
-        {/* <IndexTable.Cell>
-          <Text as="span">
-            <div dangerouslySetInnerHTML={{ __html: body_html }} />
-          </Text>
-        </IndexTable.Cell> */}
-      </IndexTable.Row>
-    )
-  );
-
   return (
     <>
       <Page title="Products">
         <LegacyCard>
-          <div style={{ padding: "16px", display: "flex" }}>
-            <div style={{ flex: 1 }}>
-              <Filters
-                queryValue={queryValue}
-                filters={filters}
-                onQueryChange={setQueryValue}
-                onQueryClear={handleQueryValueRemove}
-                onClearAll={handleClearAll}
-              />
-            </div>
-          </div>
-          <IndexTable
-            resourceName={resourceName}
-            itemCount={productData?.length}
-            selectedItemsCount={
-              allResourcesSelected ? "All" : selectedResources.length
-            }
-            onSelectionChange={handleSelectionChange}
-            hasMoreItems
-            // promotedBulkActions={promotedBulkActions}
-            lastColumnSticky
-            headings={[
-              { title: "#" },
-              { title: "Title" },
-              { title: "Product Type" },
-              { title: "Handle" },
-              { title: "Punlished Scope" },
-              { title: "status" },
-              { title: "Vendor" },
-              // { title: "Description" },
-            ]}
-          >
-            {rowMarkup}
-          </IndexTable>
+          {user?.data && (
+            <DataTable
+              columnContentTypes={[
+                "text",
+                "text",
+                "text",
+                "text",
+                "text",
+                "text",
+                "text",
+              ]}
+              headings={[
+                "Title",
+                "Product Type",
+                "Handle",
+                "Published Scope",
+                "Status",
+                "Vendor",
+                "Edit",
+                "Delete",
+              ]}
+              rows={rows}
+            />
+          )}
         </LegacyCard>
-        <AlphaStack inlineAlign="center">
-          <Pagination
-            hasPrevious={page !== 0}
-            onPrevious={() => {
-              setPage(page - 1);
-            }}
-            hasNext={page !== user?.totalPage - 1}
-            onNext={() => {
-              setPage(page + 1);
-            }}
-          />
-          
-        </AlphaStack>
+        <br />
+
+        <Pagination
+          hasPrevious={page !== 0}
+          onPrevious={() => {
+            setPage(page - 1);
+          }}
+          hasNext={page !== user?.totalPage - 1}
+          onNext={() => {
+            setPage(page + 1);
+          }}
+        />
       </Page>
     </>
   );

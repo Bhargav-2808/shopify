@@ -27,9 +27,9 @@ export const Sidebar = () => {
     },
   ];
 
-  useEffect(() => {
-    nav("/dashboard");
-  }, []);
+  // useEffect(() => {
+  //   nav("/dashboard");
+  // }, []);
 
   return (
     <Navigation location="/">

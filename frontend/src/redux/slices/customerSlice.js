@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import customerThunk from "../thunk/customerThunk";
+import {customerThunk} from "../thunk/customerThunk";
+
 
 const initialState = {
   user: null,
@@ -27,5 +28,7 @@ const customerSlice = createSlice({
       });
   },
 });
+
+
 
 export const customerReducer = customerSlice.reducer;

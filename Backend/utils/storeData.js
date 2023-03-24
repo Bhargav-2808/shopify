@@ -19,7 +19,7 @@ const getStoreCustomer = async (shop) => {
 
       customer = [...customer, ...customers];
 
-      params = products.nextPageParameters;
+      params = customers.nextPageParameters;
     } while (params !== undefined);
   })().catch(console.error);
   return customer;

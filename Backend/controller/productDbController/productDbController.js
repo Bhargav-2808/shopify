@@ -9,12 +9,12 @@ const getDbProduct = async (req, res) => {
   const query = req.query.search;
 
   let page = 0,
-    size = 10;
+    size = 8;
   if (!isNaN(pageNumber) && pageNumber > 0) {
     page = pageNumber;
   }
 
-  if (!isNaN(sizeNumber) && sizeNumber > 0 && sizeNumber < 10) {
+  if (!isNaN(sizeNumber) && sizeNumber > 0 && sizeNumber < 8) {
     size = sizeNumber;
   }
 

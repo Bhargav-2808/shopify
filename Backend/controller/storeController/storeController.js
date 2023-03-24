@@ -9,11 +9,14 @@ const getAllCustomer = async (req, res) => {
 
   try {
     const data = await getStoreCustomer("firstlucentapp.myshopify.com");
+
     const shopData = await Shop.findOne({
       where: {
         domain: "firstlucentapp.myshopify.com",
       },
     });
+
+    console.log(data?.length, "shopify data");
 
     data.map(async (item) => {
       result = await Customer.upsert(
@@ -35,7 +38,7 @@ const getAllCustomer = async (req, res) => {
         }
       );
 
-      item.addresses.map(async (i) => {
+      item?.addresses?.map(async (i) => {
         const addressExist = await Address.findOne({
           where: {
             addressId: i.id,
